@@ -1,4 +1,4 @@
-# Programming vacancies compare
+# VK Public comics uploader
 
 This script will fetch random comic from [xkcd.com](https://xkcd.com/) and publish it at your [VK](https://vk.com) group wall.
 
