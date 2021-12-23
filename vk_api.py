@@ -19,10 +19,8 @@ def publish_image_on_group_wall(
         "owner_id": f"-{group_id}",
         "from_group": 1 if from_group else 0,
         "attachments": f"photo{saved_image['owner_id']}_{saved_image['id']}",
+        "message": message,
     }
-
-    if message:
-        params["message"] = message
 
     response = requests.get(
         "https://api.vk.com/method/wall.post",
