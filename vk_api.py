@@ -19,6 +19,14 @@ def publish_image_on_group_wall(
         params=params
     )
     response.raise_for_status()
+    response_json = response.json()
+    error = response_json.get("error")
+
+    if error:
+        raise requests.HTTPError(
+            f"ErrorCode: {error['error_code']}. "
+            f"ErrorMessage: {error['error_msg']}"
+        )
 
 
 def get_upload_server(access_token, group_id):
@@ -34,7 +42,16 @@ def get_upload_server(access_token, group_id):
     )
 
     response.raise_for_status()
-    return response.json()["response"]["upload_url"]
+    response_json = response.json()
+    error = response_json.get("error")
+
+    if error:
+        raise requests.HTTPError(
+            f"ErrorCode: {error['error_code']}. "
+            f"ErrorMessage: {error['error_msg']}"
+        )
+
+    return response_json["response"]["upload_url"]
 
 
 def upload_image(upload_url, image):
@@ -44,8 +61,16 @@ def upload_image(upload_url, image):
 
     response = requests.post(upload_url, files=files)
     response.raise_for_status()
+    response_json = response.json()
+    error = response_json.get("error")
 
-    return response.json()
+    if error:
+        raise requests.HTTPError(
+            f"ErrorCode: {error['error_code']}. "
+            f"ErrorMessage: {error['error_msg']}"
+        )
+
+    return response_json
 
 
 def save_image(access_token, group_id, photo, server, hash):
@@ -58,10 +83,18 @@ def save_image(access_token, group_id, photo, server, hash):
         "v": "5.131",
     }
 
-    save_response = requests.post(
+    response = requests.post(
         "https://api.vk.com/method/photos.saveWallPhoto",
         data=params
     )
-    save_response.raise_for_status()
+    response.raise_for_status()
+    response_json = response.json()
+    error = response_json.get("error")
 
-    return save_response.json()["response"][0]
+    if error:
+        raise requests.HTTPError(
+            f"ErrorCode: {error['error_code']}. "
+            f"ErrorMessage: {error['error_msg']}"
+        )
+
+    return response_json["response"][0]

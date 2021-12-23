@@ -24,28 +24,30 @@ def main():
     vk_access_token = os.getenv("VK_ACCESS_TOKEN")
     vk_group_id = os.getenv("VK_GROUP_ID")
 
-    vk_upload_url = get_upload_server(vk_access_token, vk_group_id)
+    try:
+        vk_upload_url = get_upload_server(vk_access_token, vk_group_id)
 
-    with open(f"comic{comic_extension}", 'rb') as comic:
-        uploaded_image = upload_image(vk_upload_url, comic)
+        with open(f"comic{comic_extension}", 'rb') as comic:
+            uploaded_image = upload_image(vk_upload_url, comic)
 
-    saved_image = save_image(
-        vk_access_token,
-        vk_group_id,
-        uploaded_image["photo"],
-        uploaded_image["server"],
-        uploaded_image["hash"]
-    )
+        saved_image = save_image(
+            vk_access_token,
+            vk_group_id,
+            uploaded_image["photo"],
+            uploaded_image["server"],
+            uploaded_image["hash"]
+        )
 
-    publish_image_on_group_wall(
-        vk_access_token,
-        vk_group_id,
-        saved_image["id"],
-        saved_image["owner_id"],
-        message=comic_title
-    )
+        publish_image_on_group_wall(
+            vk_access_token,
+            vk_group_id,
+            saved_image["id"],
+            saved_image["owner_id"],
+            message=comic_title
+        )
 
-    os.remove(f"comic{comic_extension}")
+    finally:
+        os.remove(f"comic{comic_extension}")
 
 
 if __name__ == "__main__":
