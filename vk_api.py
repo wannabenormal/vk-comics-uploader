@@ -2,23 +2,15 @@ import requests
 
 
 def publish_image_on_group_wall(
-        access_token, group_id, image,
+        access_token, group_id, image_id, image_owner,
         message="", from_group=True):
-
-    upload_server = get_wall_upload_server(access_token, group_id)
-    saved_image = save_image_in_album(
-        access_token,
-        group_id,
-        image,
-        upload_server
-    )
 
     params = {
         "access_token": access_token,
         "v": "5.131",
         "owner_id": f"-{group_id}",
         "from_group": 1 if from_group else 0,
-        "attachments": f"photo{saved_image['owner_id']}_{saved_image['id']}",
+        "attachments": f"photo{image_owner}_{image_id}",
         "message": message,
     }
 
@@ -29,7 +21,7 @@ def publish_image_on_group_wall(
     response.raise_for_status()
 
 
-def get_wall_upload_server(access_token, group_id):
+def get_upload_server(access_token, group_id):
     params = {
         "access_token": access_token,
         "v": "5.131",
@@ -45,27 +37,30 @@ def get_wall_upload_server(access_token, group_id):
     return response.json()["response"]["upload_url"]
 
 
-def save_image_in_album(access_token, group_id, image, upload_url):
+def upload_image(upload_url, image):
     files = {
-            "photo": image,
-        }
+        "photo": image
+    }
 
-    upload_response = requests.post(upload_url, files=files)
-    upload_response.raise_for_status()
-    upload_meta = upload_response.json()
+    response = requests.post(upload_url, files=files)
+    response.raise_for_status()
 
-    save_params = {
+    return response.json()
+
+
+def save_image(access_token, group_id, photo, server, hash):
+    params = {
         "group_id": group_id,
         "access_token": access_token,
-        "photo": upload_meta["photo"],
-        "server": upload_meta["server"],
-        "hash": upload_meta["hash"],
+        "photo": photo,
+        "server": server,
+        "hash": hash,
         "v": "5.131",
     }
 
     save_response = requests.post(
         "https://api.vk.com/method/photos.saveWallPhoto",
-        data=save_params
+        data=params
     )
     save_response.raise_for_status()
 
