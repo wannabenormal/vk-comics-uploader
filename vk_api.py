@@ -69,7 +69,7 @@ def upload_image(upload_url, image_path):
     return response_body
 
 
-def save_image(access_token, group_id, photo, server, vk_hash):
+def save_image_in_album(access_token, group_id, photo, server, vk_hash):
     params = {
         "group_id": group_id,
         "access_token": access_token,
