@@ -18,8 +18,9 @@ def main():
     comic_url = comic["img"]
     comic_extension = get_extension_from_url(comic_url)
     comic_title = comic["alt"]
+    comic_filename = f"comic{comic_extension}"
 
-    download_image(comic_url, f"comic{comic_extension}")
+    download_image(comic_url, comic_filename)
 
     vk_access_token = os.getenv("VK_ACCESS_TOKEN")
     vk_group_id = os.getenv("VK_GROUP_ID")
@@ -27,7 +28,7 @@ def main():
     try:
         vk_upload_url = get_upload_server(vk_access_token, vk_group_id)
 
-        with open(f"comic{comic_extension}", 'rb') as comic:
+        with open(comic_filename, 'rb') as comic:
             uploaded_image = upload_image(vk_upload_url, comic)
 
         saved_image = save_image(
@@ -47,7 +48,7 @@ def main():
         )
 
     finally:
-        os.remove(f"comic{comic_extension}")
+        os.remove(comic_filename)
 
 
 if __name__ == "__main__":
