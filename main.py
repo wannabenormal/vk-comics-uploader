@@ -27,9 +27,7 @@ def main():
 
     try:
         vk_upload_url = get_upload_server(vk_access_token, vk_group_id)
-
-        with open(comic_filename, 'rb') as comic:
-            uploaded_image = upload_image(vk_upload_url, comic)
+        uploaded_image = upload_image(vk_upload_url, comic_filename)
 
         saved_image = save_image(
             vk_access_token,

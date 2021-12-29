@@ -54,12 +54,14 @@ def get_upload_server(access_token, group_id):
     return response_json["response"]["upload_url"]
 
 
-def upload_image(upload_url, image):
-    files = {
-        "photo": image
-    }
+def upload_image(upload_url, image_path):
+    with open(image_path, 'rb') as image:
+        files = {
+            "photo": image
+        }
 
-    response = requests.post(upload_url, files=files)
+        response = requests.post(upload_url, files=files)
+
     response.raise_for_status()
     response_json = response.json()
     error = response_json.get("error")
