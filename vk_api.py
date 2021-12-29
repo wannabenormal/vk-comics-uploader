@@ -1,8 +1,8 @@
 import requests
 
 
-def vk_error_handler(response):
-    error = response.get("error")
+def vk_error_handler(response_body):
+    error = response_body.get("error")
 
     if error:
         raise requests.HTTPError(
@@ -29,9 +29,9 @@ def publish_image_on_group_wall(
         params=params
     )
     response.raise_for_status()
-    response_json = response.json()
+    response_body = response.json()
 
-    vk_error_handler(response_json)
+    vk_error_handler(response_body)
 
 
 def get_upload_server(access_token, group_id):
@@ -47,11 +47,11 @@ def get_upload_server(access_token, group_id):
     )
 
     response.raise_for_status()
-    response_json = response.json()
+    response_body = response.json()
 
-    vk_error_handler(response_json)
+    vk_error_handler(response_body)
 
-    return response_json["response"]["upload_url"]
+    return response_body["response"]["upload_url"]
 
 
 def upload_image(upload_url, image_path):
@@ -63,10 +63,10 @@ def upload_image(upload_url, image_path):
         response = requests.post(upload_url, files=files)
 
     response.raise_for_status()
-    response_json = response.json()
-    vk_error_handler(response_json)
+    response_body = response.json()
+    vk_error_handler(response_body)
 
-    return response_json
+    return response_body
 
 
 def save_image(access_token, group_id, photo, server, hash):
@@ -84,7 +84,7 @@ def save_image(access_token, group_id, photo, server, hash):
         data=params
     )
     response.raise_for_status()
-    response_json = response.json()
-    vk_error_handler(response_json)
+    response_body = response.json()
+    vk_error_handler(response_body)
 
-    return response_json["response"][0]
+    return response_body["response"][0]
