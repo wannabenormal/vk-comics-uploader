@@ -1,6 +1,16 @@
 import requests
 
 
+def vk_error_handler(response):
+    error = response.get("error")
+
+    if error:
+        raise requests.HTTPError(
+            f"ErrorCode: {error['error_code']}. "
+            f"ErrorMessage: {error['error_msg']}"
+        )
+
+
 def publish_image_on_group_wall(
         access_token, group_id, image_id, image_owner,
         message="", from_group=True):
@@ -20,13 +30,8 @@ def publish_image_on_group_wall(
     )
     response.raise_for_status()
     response_json = response.json()
-    error = response_json.get("error")
 
-    if error:
-        raise requests.HTTPError(
-            f"ErrorCode: {error['error_code']}. "
-            f"ErrorMessage: {error['error_msg']}"
-        )
+    vk_error_handler(response_json)
 
 
 def get_upload_server(access_token, group_id):
@@ -43,13 +48,8 @@ def get_upload_server(access_token, group_id):
 
     response.raise_for_status()
     response_json = response.json()
-    error = response_json.get("error")
 
-    if error:
-        raise requests.HTTPError(
-            f"ErrorCode: {error['error_code']}. "
-            f"ErrorMessage: {error['error_msg']}"
-        )
+    vk_error_handler(response_json)
 
     return response_json["response"]["upload_url"]
 
@@ -64,13 +64,7 @@ def upload_image(upload_url, image_path):
 
     response.raise_for_status()
     response_json = response.json()
-    error = response_json.get("error")
-
-    if error:
-        raise requests.HTTPError(
-            f"ErrorCode: {error['error_code']}. "
-            f"ErrorMessage: {error['error_msg']}"
-        )
+    vk_error_handler(response_json)
 
     return response_json
 
@@ -91,12 +85,6 @@ def save_image(access_token, group_id, photo, server, hash):
     )
     response.raise_for_status()
     response_json = response.json()
-    error = response_json.get("error")
-
-    if error:
-        raise requests.HTTPError(
-            f"ErrorCode: {error['error_code']}. "
-            f"ErrorMessage: {error['error_msg']}"
-        )
+    vk_error_handler(response_json)
 
     return response_json["response"][0]
